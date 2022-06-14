@@ -1,14 +1,23 @@
 #!/usr/bin/env groovy
 pipeline {
-    agent none
+    agent any
+
+    tools {
+        maven "3.6.0"
+    }
+
     stages {
         stage('Build') {
-            agent {
-                docker { image 'maven' }
-            }
             steps {
-                sh "mvn package -Dmaven.test.skip=true"
+                sh "mvn -version"
+                sh "mvn clean install"
             }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
         }
     }
 }

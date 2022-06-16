@@ -1,13 +1,12 @@
 #!/usr/bin/env groovy
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.8.6-jdk-13'
-        }
-    }
-
     stages {
         stage('Build') {
+            agent {
+                docker {
+                    image 'maven:3.8.6-jdk-13'
+                }
+            }
             steps {
                 sh "mvn -version"
                 sh "mvn clean install"

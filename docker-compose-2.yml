@@ -4,8 +4,18 @@ services:
     image: jenkinsci/blueocean:1.25.0.1
     container_name: jenkins
     restart: on-failure
+    networks:
+      - jenkins
     ports:
       - '8084:8080'
     volumes:
-      - 'jenkins-data:/var/jenkins_home'
+      - 'volume_jenkins7:/var/jenkins_home'
       - '/var/run/docker.sock:/var/run/docker.sock'
+
+volumes:
+  volume_jenkins7:
+    driver: local
+
+networks:
+  jenkins:
+    driver: bridge

@@ -1,4 +1,4 @@
-package academy.jairo.springboot.camel.demo.route;
+package academy.jairo.springboot.camel.demo.file;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;

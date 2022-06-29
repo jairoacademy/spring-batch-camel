@@ -10,7 +10,7 @@ public class FileValidator {
 
     public boolean isValid(Exchange exchange) throws Exception {
         File file = exchange.getIn().getBody(File.class);
-        boolean isResult = file.getName().indexOf("ok")>0;
+        boolean isResult = true; //file.getName().indexOf("ok")>0;
 
         log.info("->.when | FileValidator.isValid:{} | in body:{}, file:{}",
                 isResult, exchange.getIn().getBody(), file);

@@ -28,10 +28,10 @@ public class FileProcessor implements Processor {
         log.info("-> .process | FileProcessor.process | in body:{}", exchange.getIn().getBody());
         File file = exchange.getIn().getBody(File.class);
         String filePath = properties.getRoutePath() + properties.getRouteOutput() + File.separator  + file.getName();
-        sendToFTPUpload(filePath);
+        sendToFTPUpload(file.getName(), filePath);
     }
 
-    public void sendToFTPUpload(String filePath) {
+    public void sendToFTPUpload(String fileName, String filePath) {
         FTPClient client = new FTPClient();
         FileInputStream fileInputStream = null;
         try {
@@ -39,7 +39,7 @@ public class FileProcessor implements Processor {
             client.login("jairo", "adm");
 
             fileInputStream = new FileInputStream(filePath);
-            client.storeFile(filePath, fileInputStream);
+            client.storeFile(fileName, fileInputStream);
             client.logout();
         } catch (IOException e) {
             e.printStackTrace();

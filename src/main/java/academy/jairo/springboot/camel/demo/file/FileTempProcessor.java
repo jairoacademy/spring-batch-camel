@@ -1,10 +1,10 @@
 package academy.jairo.springboot.camel.demo.file;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
-@Log4j2
+@Slf4j
 public class FileTempProcessor implements Processor {
 
     @Override

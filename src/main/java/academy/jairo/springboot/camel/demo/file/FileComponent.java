@@ -1,12 +1,12 @@
 package academy.jairo.springboot.camel.demo.file;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 
 @Component
-@Log4j2
+@Slf4j
 public class FileComponent {
 
     public void log(File file) {

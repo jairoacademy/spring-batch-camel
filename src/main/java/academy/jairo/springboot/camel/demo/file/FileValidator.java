@@ -1,11 +1,11 @@
 package academy.jairo.springboot.camel.demo.file;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 
 import java.io.File;
 
-@Log4j2
+@Slf4j
 public class FileValidator {
 
     public boolean isValid(Exchange exchange) throws Exception {

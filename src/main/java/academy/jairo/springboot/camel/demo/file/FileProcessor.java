@@ -5,16 +5,16 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import lombok.extern.log4j.Log4j2;
 import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-@Log4j2
+@Slf4j
 public class FileProcessor implements Processor {
 
     private final SftpProperties properties;

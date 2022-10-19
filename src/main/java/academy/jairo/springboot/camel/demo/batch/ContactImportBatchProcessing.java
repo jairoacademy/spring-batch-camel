@@ -41,13 +41,7 @@ import java.io.IOException;
 public class ContactImportBatchProcessing {
 
     @Autowired
-    private JobBuilderFactory jobBuilderFactory;
-
-    @Autowired
     private StepBuilderFactory stepBuilderFactory;
-
-    @Autowired
-    private LookupFilesTasklet lookupContactFilesTasklet;
 
     @Autowired
     private ParameterDTO parameters;
@@ -55,26 +49,29 @@ public class ContactImportBatchProcessing {
     @Autowired
     private ErrorFileRepository errorFileRepository;
 
-    @Autowired
-    private ContactRepository contactRepository;
-
     @Bean
-    public Job contactImportFileJob() throws ParseException, IOException, java.text.ParseException {
+    public Job contactImportFileJob(JobBuilderFactory jobBuilderFactory, LookupFilesTasklet lookupContactFilesTasklet,
+                                    ContactRepository contactRepository)
+            throws ParseException, IOException, java.text.ParseException {
+
         return jobBuilderFactory
                 .get("contactImportFileJob")
                 .incrementer(new RunIdIncrementer())
-                .start(lookupFilesStep())
-                .next(contactImportFileStep())
+                .start(lookupFilesStep(lookupContactFilesTasklet))
+                .next(contactImportFileStep(contactRepository))
                 .build();
     }
+
     @Bean
-    public Step contactImportFileStep() throws ParseException, IOException, java.text.ParseException {
+    public Step contactImportFileStep(ContactRepository contactRepository)
+            throws ParseException, IOException, java.text.ParseException {
+
         return stepBuilderFactory
                 .get("contactImportFileStep")
                 .<ContactDTO, Contact>chunk(100)
                 .reader(multiResourceItemReader())
                 .processor(compositeItemProcessor())
-                .writer(writer())
+                .writer(writer(contactRepository))
                 .faultTolerant()
                 .skipLimit(10)
                 .skip(FlatFileParseException.class)
@@ -82,8 +79,11 @@ public class ContactImportBatchProcessing {
                 .listener(importListener())
                 .build();
     }
+
     @Bean
-    public Step lookupFilesStep() throws ParseException, IOException, java.text.ParseException {
+    public Step lookupFilesStep(LookupFilesTasklet lookupContactFilesTasklet)
+            throws ParseException {
+
         return stepBuilderFactory
                 .get("lookupFilesStep")
                 .tasklet(lookupContactFilesTasklet)
@@ -96,21 +96,21 @@ public class ContactImportBatchProcessing {
     }
 
     @Bean
-    public ItemWriter<Contact> writer() {
+    public ItemWriter<Contact> writer(ContactRepository contactRepository) {
         return new ContactItemWriter(contactRepository);
     }
+
     @Bean
     public ItemProcessor<ContactDTO, Contact> compositeItemProcessor() {
         return new CompositeItemProcessorBuilder<ContactDTO, Contact>()
                 .delegates(validatingProcessor(), mapperProcessor())
                 .build();
     }
+
     @Bean
     @JobScope
     public ItemProcessor<ContactDTO,ContactDTO> validatingProcessor() {
-        ContactValidatingItemProcessor beanValidatingItemProcessor = new ContactValidatingItemProcessor(
-                errorFileRepository);
-        return beanValidatingItemProcessor;
+        return new ContactValidatingItemProcessor(errorFileRepository);
     }
 
     @Bean
@@ -118,13 +118,15 @@ public class ContactImportBatchProcessing {
     public ItemProcessor<ContactDTO, Contact> mapperProcessor() {
         return new ContactMapperProcessor();
     }
+
     @Bean
     public MultiResourceItemReader<ContactDTO> multiResourceItemReader()
             throws ParseException, IOException, java.text.ParseException {
 
-        MultiResourceItemReader<ContactDTO> multiResourceItemReader = new MultiResourceItemReader<ContactDTO>();
+        MultiResourceItemReader<ContactDTO> multiResourceItemReader = new MultiResourceItemReader<>();
         multiResourceItemReader.setResources(parameters.getResourcesImportReceivedPath());
         multiResourceItemReader.setDelegate(reader(multiResourceItemReader));
+
         return multiResourceItemReader;
 
     }
@@ -133,7 +135,7 @@ public class ContactImportBatchProcessing {
     public FlatFileItemReader<ContactDTO> reader(MultiResourceItemReader<ContactDTO> delegator)
         throws ParseException, java.text.ParseException {
 
-        FlatFileItemReader<ContactDTO> itemReader = new FlatFileItemReader<ContactDTO>();
+        FlatFileItemReader<ContactDTO> itemReader = new FlatFileItemReader<>();
         itemReader.setLinesToSkip(1);
         ContactLineMapper lineMapper = getLineMapper(delegator);
         itemReader.setLineMapper(lineMapper);
@@ -150,7 +152,7 @@ public class ContactImportBatchProcessing {
         delimitedLineTokenizer.setDelimiter(parameters.getFileStructureDelimiter());
         String[] headers = FileLayoutGenerator.getHeadersFromDTOWithoutDefault();
         delimitedLineTokenizer.setNames(headers);
-        BeanWrapperFieldSetMapper<ContactDTO> beanWrapperFieldSetMapper = new BeanWrapperFieldSetMapper<ContactDTO>();
+        BeanWrapperFieldSetMapper<ContactDTO> beanWrapperFieldSetMapper = new BeanWrapperFieldSetMapper<>();
         beanWrapperFieldSetMapper.setTargetType(ContactDTO.class);
         beanWrapperFieldSetMapper.setDistanceLimit(0);
         ContactLineMapper lineMapper = new ContactLineMapper(delegator, errorFileRepository);

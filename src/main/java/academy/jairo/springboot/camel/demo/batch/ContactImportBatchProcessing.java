@@ -150,11 +150,8 @@ public class ContactImportBatchProcessing {
         delimitedLineTokenizer.setDelimiter(parameters.getFileStructureDelimiter());
         String[] headers = FileLayoutGenerator.getHeadersFromDTOWithoutDefault();
         delimitedLineTokenizer.setNames(headers);
-        BeanWrapperFieldSetMapper<ContactDTO> beanWrapperFieldSetMapper = new BeanWrapperFieldSetMapper<ContactDTO>() {
-            {
-                setTargetType(ContactDTO.class);
-            }
-        };
+        BeanWrapperFieldSetMapper<ContactDTO> beanWrapperFieldSetMapper = new BeanWrapperFieldSetMapper<ContactDTO>();
+        beanWrapperFieldSetMapper.setTargetType(ContactDTO.class);
         beanWrapperFieldSetMapper.setDistanceLimit(0);
         ContactLineMapper lineMapper = new ContactLineMapper(delegator, errorFileRepository);
         lineMapper.setLineTokenizer(delimitedLineTokenizer);

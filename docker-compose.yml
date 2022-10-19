@@ -1,11 +1,29 @@
+# Esse projeto de teste comecou pra testar esteira no jenkins, com pouco sucesso
+# Em segue, use pra adicionar o que estou fazendo na empresa atual, a titulo de guardar
+# o que estou evoluindo na tecnologia.
+# Vampos seguir agora adicionando banco de dados...
+# Acabei por decidir sem persistencia mesmo, usando o h2
 version: '3'
 services:
+  db:
+    image: oraclelinux:9
+    container_name: dcamel-oracle
+    volumes:
+      - ~/volumes/dcamel-oracle:/opt/oracle/oradata # persistent oracle database data.
+    ports:
+      - 1521:1521
+      - 8080:8080
+      - 5500:5500
+
   jenkins:
     image: jenkinsci/blueocean:1.25.0.1
-    container_name: jenkins
+    container_name: dcamel-jenkins
     restart: on-failure
+    privileged: true
+    user: root
     ports:
-      - '8084:8080'
+      - 8084:8080
+      - 50000:50000
     volumes:
-      - 'jenkins-data:/var/jenkins_home'
-      - '/var/run/docker.sock:/var/run/docker.sock'
+      - ~/volumes/dcamel-jenkins:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.socks

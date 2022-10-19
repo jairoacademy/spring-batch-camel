@@ -13,14 +13,14 @@ import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 @Slf4j
-public class ContactLineMapper implements LineMapper {
-    private MultiResourceItemReader delegator;
-    private BeanWrapperFieldSetMapper fieldSetMapper;
+public class ContactLineMapper implements LineMapper<ContactDTO> {
+    private MultiResourceItemReader<ContactDTO> delegator;
+    private BeanWrapperFieldSetMapper<ContactDTO> fieldSetMapper;
     private DelimitedLineTokenizer lineTokenizer;
     private ErrorFileRepository errorFileRepository;
     @Value("#{jobExecution.executionContext}") //Not Work
     private ExecutionContext executionContext;
-    public ContactLineMapper(MultiResourceItemReader delegator, ErrorFileRepository errorFileRepository) {
+    public ContactLineMapper(MultiResourceItemReader<ContactDTO> delegator, ErrorFileRepository errorFileRepository) {
         this.delegator = delegator;
         this.errorFileRepository = errorFileRepository;
     }
@@ -37,7 +37,7 @@ public class ContactLineMapper implements LineMapper {
         Resource currentResource = delegator.getCurrentResource();
 
         try {
-            contactDTO = (ContactDTO) this.fieldSetMapper.mapFieldSet(this.lineTokenizer.tokenize(line));
+            contactDTO = this.fieldSetMapper.mapFieldSet(this.lineTokenizer.tokenize(line));
             contactDTO.setLineNumber(i);
         } catch (Exception e) {
 
@@ -51,7 +51,7 @@ public class ContactLineMapper implements LineMapper {
 
         return contactDTO;
     }
-    public void setFieldSetMapper(BeanWrapperFieldSetMapper fieldSetMapper) {
+    public void setFieldSetMapper(BeanWrapperFieldSetMapper<ContactDTO> fieldSetMapper) {
         this.fieldSetMapper = fieldSetMapper;
     }
     public void setLineTokenizer(DelimitedLineTokenizer lineTokenizer) {

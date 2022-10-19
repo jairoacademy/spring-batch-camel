@@ -12,9 +12,9 @@
 	</parent>
 
 	<groupId>academy.jairo.springboot.camel</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>spring-batch-camel</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>demo</name>
+	<name>spring-batch-camel</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>

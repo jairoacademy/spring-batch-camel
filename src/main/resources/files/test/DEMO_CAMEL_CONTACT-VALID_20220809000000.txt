@@ -1,0 +1,5 @@
+0|~|Arquivo de Teste|~|20220809000000|~|name|~|email|~|phone
+1|~|Jairo Soares|~|jairo.soares@gmail.com|~|5199989-0680
+1|~|Richelle Soares|~|richelle.soares@gmail.com|~|8598944-1238
+9|~|2
+V1.0

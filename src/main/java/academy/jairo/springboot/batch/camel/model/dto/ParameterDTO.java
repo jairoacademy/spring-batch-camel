@@ -58,7 +58,7 @@ public class ParameterDTO {
 
             resourcesImportReceivedPath = patternResolver
                     .getResources("file:" +
-                            this.importReceivedPath + "/"+ Constants.CONTACT_PATTERN_FILENAME);
+                            this.importReceivedPath + Constants.PATH_SEPARATOR + Constants.CONTACT_PATTERN_FILENAME);
         }
         return resourcesImportReceivedPath;
     }

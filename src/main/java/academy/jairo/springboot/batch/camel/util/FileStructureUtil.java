@@ -8,6 +8,7 @@ import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -80,4 +81,21 @@ public class FileStructureUtil {
                 Paths.get(moveToNormalized.concat("/").concat(fileNameNormalized)),
                 StandardCopyOption.REPLACE_EXISTING);
     }
+
+    public static void copyResourceTo(String fileName, String rootPath) throws IOException {
+        InputStream inputStream = null;
+
+        try {
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+
+            inputStream = classloader.getResourceAsStream("files/test/" +fileName );
+
+            Files.copy(inputStream, Paths.get(rootPath + "/" + fileName), StandardCopyOption.REPLACE_EXISTING);
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+    }
+
 }
